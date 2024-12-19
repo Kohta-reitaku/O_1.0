@@ -1,27 +1,23 @@
-window.onload = function() {
-    fetchImages();
-};
+const express = require('express');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-function fetchImages() {
-    const url = 'https://kohta-reitaku.github.io/O_1.0/Sample.html'; // サンプルURLです。実際のURLに置き換えてください。
-    fetch(url)
-        .then(response => response.text())
-        .then(data => {
-            const parser = new DOMParser();
-            const htmlDocument = parser.parseFromString(data, "text/html");
-            const imageElements = htmlDocument.querySelectorAll('img');
-            displayImages(imageElements);
-        }).catch(error => {
-            console.error('Error fetching the images:', error);
+const app = express();
+
+app.get('/images', async (req, res) => {
+    try {
+        const response = await axios.get('https://kohta-reitaku.github.io/O_1.0/Sample.html');
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const images = [];
+        $('img').each((index, element) => {
+            images.push($(element).attr('src'));
         });
-}
+        res.json(images);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching images' });
+    }
+});
 
-function displayImages(images) {
-    const container = document.getElementById('image-container');
-    images.forEach(img => {
-        const src = img.src; // 画像のURL
-        const image = document.createElement('img');
-        image.src = src;
-        container.appendChild(image);
-    });
-}
+app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+
