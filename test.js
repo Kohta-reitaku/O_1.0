@@ -3,7 +3,7 @@ window.onload = function() {
 };
 
 function fetchImages() {
-    const url = 'https://example.com'; // サンプルURLです。実際のURLに置き換えてください。
+    const url = 'https://kohta-reitaku.github.io/O_1.0/Sample.html'; // サンプルURLです。実際のURLに置き換えてください。
     fetch(url)
         .then(response => response.text())
         .then(data => {
